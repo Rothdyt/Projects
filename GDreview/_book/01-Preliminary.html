@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>A skecth of the first-order optimization methods</title>
+  <meta name="description" content="A literature review of the first-order optimization methods.">
+  <meta name="generator" content="bookdown 0.3.20 and GitBook 2.6.7">
+
+  <meta property="og:title" content="A skecth of the first-order optimization methods" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="pics/misaki.jpg" />
+  <meta property="og:description" content="A literature review of the first-order optimization methods." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="A skecth of the first-order optimization methods" />
+  
+  <meta name="twitter:description" content="A literature review of the first-order optimization methods." />
+  <meta name="twitter:image" content="pics/misaki.jpg" />
+
+<meta name="author" content="Yutong Dai">
+
+
+<meta name="date" content="2017-05-17">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="index.html">
+<link rel="next" href="02-Gradient_Methods.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Text Book</a></li>
+<li><a href="./">Roth</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="01-Preliminary.html"><a href="01-Preliminary.html"><i class="fa fa-check"></i><b>1</b> Comments on the first-order optimization</a><ul>
+<li class="chapter" data-level="1.1" data-path="01-Preliminary.html"><a href="01-Preliminary.html#lipschtiz-constant"><i class="fa fa-check"></i><b>1.1</b> Lipschtiz constant</a></li>
+<li class="chapter" data-level="1.2" data-path="01-Preliminary.html"><a href="01-Preliminary.html#convexity"><i class="fa fa-check"></i><b>1.2</b> Convexity</a></li>
+<li class="chapter" data-level="1.3" data-path="01-Preliminary.html"><a href="01-Preliminary.html#strongly-convex-and-error-bounds-assumptions"><i class="fa fa-check"></i><b>1.3</b> Strongly convex and error bounds assumptions</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="02-Gradient_Methods.html"><a href="02-Gradient_Methods.html"><i class="fa fa-check"></i><b>2</b> Gradient Methods</a></li>
+<li class="chapter" data-level="3" data-path="03-Block_Coordinate_Descent.html"><a href="03-Block_Coordinate_Descent.html"><i class="fa fa-check"></i><b>3</b> Block Coordinate Descent Methods</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A skecth of the first-order optimization methods</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="comments-on-the-first-order-optimization" class="section level1">
+<h1><span class="header-section-number">Chapter 1</span> Comments on the first-order optimization</h1>
+<p>In many literatures, problems of interest are naturally endowed with some basic assumptions so that researchers are able to derive beautiful analytical results, such as the convergence rate. So one might ask why these assumptioms are important and what are intuitions behind these assumtions? We try to answer these questions by making following comments.</p>
+<div id="lipschtiz-constant" class="section level2">
+<h2><span class="header-section-number">1.1</span> Lipschtiz constant</h2>
+<p>Problems of interest are naturally endowed with the <em>Lipschitz continous gradient</em> property, that is</p>
+
+<div class="definition">
+<span id="def:unnamed-chunk-2" class="definition"><strong>Definition 1.1 </strong></span>We can <span class="math inline">\(f(x)\)</span> is gradient Lipschitz continous if<br />
+<span class="math display">\[||\nabla f(x) - \nabla f(y) || \leq L || x - y|| \forall x,y\in R^n.\]</span> Here <span class="math inline">\(||.||\)</span> means the Euclidean norm.
+</div>
+
+<p><strong>Remark</strong> Intuitively, if <span class="math inline">\(f(x)\)</span> is gradient Lipschitz continous, then it is uniformly upper bounded by a quadratic function <span class="math inline">\(\phi_1(x)\)</span>, that is</p>
+<p><span class="math display">\[ f(x) \leq f(x_0) + \nabla f(x_0)^T(x-x_0) + \frac{L}{2} ||x-x_0||^2 := \phi_1(x) \quad \forall x,x_0\in R^n \]</span></p>
+<p>also <span class="math inline">\(f(x)\)</span> is the upper bound of another quadratic function <span class="math inline">\(\phi_2(x)\)</span>, taking form of</p>
+<p><span class="math display">\[ \phi_2(x) := f(x0) + \nabla f(x_0)^T(x-x_0) - \frac{L}{2} ||x-x_0||^2. \]</span> See Figure<a href="01-Preliminary.html#fig:geomlip">1.1</a> for example.</p>
+<div class="figure" style="text-align: center"><span id="fig:geomlip"></span>
+<img src="pics/geomlip.png" alt="An illustration of convex function."  />
+<p class="caption">
+Figure 1.1: An illustration of convex function.
+</p>
+</div>
+<p>To verify this remark, we can apply the following lemma.</p>
+
+<div class="lemma">
+<p><span id="lem:bound" class="lemma"><strong>Lemma 1.1 </strong></span>If <span class="math inline">\(f(x)\)</span> is continuously differentiable and gradient Lipschtiz continuous, then for any <span class="math inline">\(x,y\)</span> the following holds:</p>
+<span class="math display">\[ | f(x) - f(y) - (y-x)^T\nabla f(x)| \leq \frac{L}{2} || y-x ||^2\]</span>
+</div>
+
+
+<div class="corollary">
+<span id="cor:unnamed-chunk-3" class="corollary"><strong>Corollary 1.1 </strong></span>From <a href="01-Preliminary.html#lem:bound">1.1</a>, we assert that if <span class="math inline">\(f(x)\)</span> is continuously differentiable and gradient Lipschtiz continuous then the Hessian of <span class="math inline">\(f(x)\)</span> is bounded by <span class="math inline">\(LI_n\)</span>, where <span class="math inline">\(I_n\)</span> is <span class="math inline">\(n\times n\)</span> Identity matrix.
+</div>
+
+<p>A easy way to check the <em>gradient Lipschitz continous</em> assumption is to apply the Lemma<a href="01-Preliminary.html#lem:L-inclusion">1.2</a><span class="citation">(Nesterov <a href="#ref-nesterov2013introductory">2013</a>)</span></p>
+
+<div class="lemma">
+<p><span id="lem:L-inclusion" class="lemma"><strong>Lemma 1.2 </strong></span>If <span class="math inline">\(f(x)\)</span> is twice differentiable and satisfies <span class="math inline">\(||\nabla f(x) - \nabla f(y) || \leq L || x - y||\)</span> if and only if</p>
+<p><span class="math display">\[ ||\nabla^2 f(x) || \leq L, \forall x\in R^n. \]</span></p>
+For matrix case, <span class="math inline">\(||A|| = \sqrt{\lambda_{max}(A^TA)},\forall A\in R^{n\times n}.\)</span>
+</div>
+
+</div>
+<div id="convexity" class="section level2">
+<h2><span class="header-section-number">1.2</span> Convexity</h2>
+<p><strong>Why convex?</strong> It’s quite clear that convex programming enjoys many statisfactory analytical properties. For example, you can find the glboal minimal solutions of a concrete problem and it’s much easier to conduct convergence analysis of proposed algorithms.</p>
+<p><strong>Connections between convexity and the contractive map.</strong> In many textbooks, such as <span class="citation">(Bertsekas <a href="#ref-bertsekas1999nonlinear">1999</a>)</span>, they define the convex function as</p>
+
+<div class="definition">
+<p><span id="def:unnamed-chunk-4" class="definition"><strong>Definition 1.2 </strong></span>Let <span class="math inline">\(X\)</span> be a convex set in a real vector space and let <span class="math inline">\(f: X \rightarrow R\)</span> be a function. <span class="math inline">\(f\)</span> is called convex if:</p>
+<span class="math display">\[
+\forall x_{1},x_{2}\in X,\forall t\in [0,1]:\qquad f(tx_{1}+(1-t)x_{2})\leq tf(x_{1})+(1-t)f(x_{2}).
+\]</span>
+</div>
+
+<p>And visualize this by drawing a <a href="https://en.wikipedia.org/wiki/Convex_function">picture</a> like Figure<a href="01-Preliminary.html#fig:convexfunction">1.2</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:convexfunction"></span>
+<img src="pics/ConvexFunction.png" alt="An illustration of convex function."  />
+<p class="caption">
+Figure 1.2: An illustration of convex function.
+</p>
+</div>
+<p>But indeed, we can gain new ideas if we combine the convexity with gradient descent methods. The steepest decent method takes the form of</p>
+<p><span class="math display">\[x^{k+1} = x^k - \alpha_k\nabla f(x_k),\]</span> Hence, we can define a map takes the form of</p>
+<p>$$ g(x) = x - </p>
+</div>
+<div id="strongly-convex-and-error-bounds-assumptions" class="section level2">
+<h2><span class="header-section-number">1.3</span> Strongly convex and error bounds assumptions</h2>
+
+</div>
+</div>
+<h3> Block Coordinate Descent Methods</h3>
+<div id="refs" class="references">
+<div id="ref-nesterov2013introductory">
+<p>Nesterov, Yurii. 2013. <em>Introductory Lectures on Convex Optimization: A Basic Course</em>. Vol. 87. Springer Science &amp; Business Media.</p>
+</div>
+<div id="ref-bertsekas1999nonlinear">
+<p>Bertsekas, Dimitri P. 1999. <em>Nonlinear Programming</em>. Athena scientific Belmont.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="02-Gradient_Methods.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/01-Preliminary.Rmd",
+"text": "Edit"
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

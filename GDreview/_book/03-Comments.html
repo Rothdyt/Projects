@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>A skecth of the first-order optimization methods</title>
+  <meta name="description" content="A literature review of the first-order optimization methods.">
+  <meta name="generator" content="bookdown 0.3.20 and GitBook 2.6.7">
+
+  <meta property="og:title" content="A skecth of the first-order optimization methods" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="pics/misaki.jpg" />
+  <meta property="og:description" content="A literature review of the first-order optimization methods." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="A skecth of the first-order optimization methods" />
+  
+  <meta name="twitter:description" content="A literature review of the first-order optimization methods." />
+  <meta name="twitter:image" content="pics/misaki.jpg" />
+
+<meta name="author" content="Yutong Dai">
+
+
+<meta name="date" content="2017-05-18">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="02-Block_Coordinate_Descent.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Text Book</a></li>
+<li><a href="./">Roth</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="01-Gradient_Methods.html"><a href="01-Gradient_Methods.html"><i class="fa fa-check"></i><b>1</b> Gradient Methods</a></li>
+<li class="chapter" data-level="2" data-path="02-Block_Coordinate_Descent.html"><a href="02-Block_Coordinate_Descent.html"><i class="fa fa-check"></i><b>2</b> Block Coordinate Descent Methods</a></li>
+<li class="chapter" data-level="3" data-path="03-Comments.html"><a href="03-Comments.html"><i class="fa fa-check"></i><b>3</b> Comments on the first-order optimization</a><ul>
+<li class="chapter" data-level="3.1" data-path="03-Comments.html"><a href="03-Comments.html#lipschtiz-constant"><i class="fa fa-check"></i><b>3.1</b> Lipschtiz constant</a></li>
+<li class="chapter" data-level="3.2" data-path="03-Comments.html"><a href="03-Comments.html#strong-convexity"><i class="fa fa-check"></i><b>3.2</b> Strong Convexity</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="03-Comments.html"><a href="03-Comments.html#the-geometric-interpretation-of-strong-convexity"><i class="fa fa-check"></i><b>3.2.1</b> The geometric interpretation of Strong Convexity</a></li>
+<li class="chapter" data-level="3.2.2" data-path="03-Comments.html"><a href="03-Comments.html#why-linear-rate-of-convergence"><i class="fa fa-check"></i><b>3.2.2</b> Why linear rate of convergence?</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="03-Comments.html"><a href="03-Comments.html#error-bounds"><i class="fa fa-check"></i><b>3.3</b> Error bounds</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A skecth of the first-order optimization methods</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="comments-on-the-first-order-optimization" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Comments on the first-order optimization</h1>
+<p>We have already seen that in many literatures, problems of interest are naturally endowed with some basic assumptions so that researchers are able to derive beautiful analytical results, such as the convergence rate. One might ask that why these assumptioms are important and what are intuitions behind these assumtions? We try to answer these questions by making following comments.</p>
+<div id="lipschtiz-constant" class="section level2">
+<h2><span class="header-section-number">3.1</span> Lipschtiz constant</h2>
+<p>Problems of interest are naturally endowed with the <em>Lipschitz continous gradient</em> property, that is</p>
+
+<div class="definition">
+<span id="def:unnamed-chunk-2" class="definition"><strong>Definition 3.1 </strong></span>We can <span class="math inline">\(f(x)\)</span> is gradient Lipschitz continous if<br />
+<span class="math display">\[||\nabla f(x) - \nabla f(y) || \leq L || x - y|| \forall x,y\in R^n.\]</span> Here <span class="math inline">\(||.||\)</span> means the Euclidean norm.
+</div>
+
+<p><strong>Remark</strong> Intuitively, the Lipschitz continous gradient property enforces <span class="math inline">\(f(x)\)</span> not to be “too convex”. For example, the <span class="math inline">\(f(x) = |x|\)</span> dosen’t enjoy this property.</p>
+<p><strong>Remark</strong> If <span class="math inline">\(f(x)\)</span> is gradient Lipschitz continous, then it is upper bounded by a quadratic function <span class="math inline">\(\phi_1(x)\)</span>, that is</p>
+<p><span class="math display">\[ f(x) \leq f(x_0) + \nabla f(x_0)^T(x-x_0) + \frac{L}{2} ||x-x_0||^2 := \phi_1(x) \quad \forall x,x_0\in R^n \]</span></p>
+<p>also <span class="math inline">\(f(x)\)</span> is the upper bound of another quadratic function <span class="math inline">\(\phi_2(x)\)</span>, taking form of</p>
+<p><span class="math display">\[ \phi_2(x) := f(x0) + \nabla f(x_0)^T(x-x_0) - \frac{L}{2} ||x-x_0||^2. \]</span> See Figure<a href="03-Comments.html#fig:geomlip">3.1</a> for example.</p>
+<div class="figure" style="text-align: center"><span id="fig:geomlip"></span>
+<img src="pics/geomlip.png" alt="An illustration of the gradient Lipschtiz continuous propety."  />
+<p class="caption">
+Figure 3.1: An illustration of the gradient Lipschtiz continuous propety.
+</p>
+</div>
+<p>To verify this remark, we can apply the following lemma.</p>
+
+<div class="lemma">
+<p><span id="lem:bound" class="lemma"><strong>Lemma 3.1 </strong></span>If <span class="math inline">\(f(x)\)</span> is continuously differentiable and gradient Lipschtiz continuous, then for any <span class="math inline">\(x,y\)</span> the following holds:</p>
+<span class="math display">\[ | f(x) - f(y) - (y-x)^T\nabla f(x)| \leq \frac{L}{2} || y-x ||^2\]</span>
+</div>
+
+
+<div class="corollary">
+<span id="cor:unnamed-chunk-3" class="corollary"><strong>Corollary 3.1 </strong></span>From Lemma<a href="03-Comments.html#lem:bound">3.1</a>, we assert that if <span class="math inline">\(f(x)\)</span> is continuously differentiable and gradient Lipschtiz continuous then the Hessian of <span class="math inline">\(f(x)\)</span> is bounded by <span class="math inline">\(LI_n\)</span>, where <span class="math inline">\(I_n\)</span> is <span class="math inline">\(n\times n\)</span> unit matrix.
+</div>
+
+<p>A easy way to check the <em>gradient Lipschitz continous</em> assumption is to apply the Lemma<a href="03-Comments.html#lem:L-inclusion">3.2</a><span class="citation">(Nesterov <a href="#ref-nesterov2013introductory">2013</a>)</span></p>
+
+<div class="lemma">
+<p><span id="lem:L-inclusion" class="lemma"><strong>Lemma 3.2 </strong></span>If <span class="math inline">\(f(x)\)</span> is twice differentiable and satisfies <span class="math inline">\(||\nabla f(x) - \nabla f(y) || \leq L || x - y||\)</span> if and only if</p>
+<p><span class="math display">\[ ||\nabla^2 f(x) || \leq L, \forall x\in R^n. \]</span></p>
+For matrix case, <span class="math inline">\(||A|| = \sqrt{\lambda_{max}(A^TA)},\forall A\in R^{n\times n}.\)</span>
+</div>
+
+</div>
+<div id="strong-convexity" class="section level2">
+<h2><span class="header-section-number">3.2</span> Strong Convexity</h2>
+<div id="the-geometric-interpretation-of-strong-convexity" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> The geometric interpretation of Strong Convexity</h3>
+<div class="figure" style="text-align: center"><span id="fig:geomstrong"></span>
+<img src="pics/geomstrong.png" alt="An illustration of the strongly convex propety."  />
+<p class="caption">
+Figure 3.2: An illustration of the strongly convex propety.
+</p>
+</div>
+</div>
+<div id="why-linear-rate-of-convergence" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Why linear rate of convergence?</h3>
+<p>Before we answer this question, we first list the definition of a contraction mapping and the Banach fixed-point theorem.</p>
+
+<div class="definition">
+<p><span id="def:unnamed-chunk-4" class="definition"><strong>Definition 3.2  (Contraction Mapping)  </strong></span>Let <span class="math inline">\((X, d)\)</span> be a metric space. Then a map <span class="math inline">\(T : X \rightarrow X\)</span> is called a contraction mapping on <span class="math inline">\(X\)</span> if there exists <span class="math inline">\(q \in [0, 1)\)</span> such that</p>
+<p><span class="math display">\[ d(T(x),T(y))\leq qd(x,y) \forall x, y \in X.\]</span></p>
+</div>
+
+
+<div class="theorem">
+<span id="thm:unnamed-chunk-5" class="theorem"><strong>Theorem 3.1  (Banach Fixed Point Theorem)  </strong></span>Let <span class="math inline">\((X, d)\)</span> be a non-empty complete metric space with a contraction mapping <span class="math inline">\(T : X \rightarrow X\)</span>. Then <span class="math inline">\(T\)</span> admits a unique fixed-point <span class="math inline">\(x^*\)</span> in <span class="math inline">\(X\)</span> (i.e. <span class="math inline">\(T(x^*) = x^*\)</span>). Furthermore, <span class="math inline">\(x^*\)</span> can be found as follows: start with an arbitrary element <span class="math inline">\(x_0\)</span> in <span class="math inline">\(X\)</span> and define a sequence <span class="math inline">\(\{x_n\}\)</span> by <span class="math inline">\(x_n = T(x_{n−1})\)</span>, then <span class="math inline">\(x_n \rightarrow x^*\)</span>. Moreover, <span class="math display">\[ d(x^{*},x_{n+1})\leq qd(x^{*},x_{n}) \]</span>
+</div>
+
+<p>Then we establish connections between contraction mapping and linear rate of convergence through the gradient decent method, which takes the form of</p>
+<p><span class="math display">\[x^{k+1} = x^k - \alpha\nabla f(x^k),\]</span> If we define a mapping as <span class="math inline">\(g(x) = x - \alpha\nabla f(x)\)</span> and suppose <span class="math inline">\(g(x)\)</span> is contractive on <span class="math inline">\(R^n\)</span>. Assume there exists a stationary point <span class="math inline">\(x^*\)</span>, then starting from any point <span class="math inline">\(x^0\)</span>, we derive</p>
+<p><span class="math display" id="eq:linear">\[
+\begin{align}
+||x^{k+1} - x^*|| &amp;= ||x^{k} - \alpha\nabla f(x^k) - x^*|| \\
+                  &amp;= || g(x^k) - g(x^*)|| \\
+                  &amp; \leq q||x^k - x^*|| \\
+                  &amp; \leq q^{k+1}|| x^0 - x^* || \tag{3.1}
+\end{align}
+\]</span> <a href="03-Comments.html#eq:linear">(3.1)</a> indicates that the rate of convergence is linear.</p>
+<p>Finally, we assert that</p>
+
+<div class="lemma">
+<span id="lem:unnamed-chunk-6" class="lemma"><strong>Lemma 3.3 </strong></span>If <span class="math inline">\(f(x)\)</span> is twice continuously differentiable, the <span class="math inline">\(g(x)\)</span> is a comtraction mapping if and only if <span class="math inline">\(f(x)\)</span> is strongly convex on <span class="math inline">\(R^n\)</span>.
+</div>
+
+
+<div class="proof">
+Proof </em></span>  * Suppose <span class="math inline">\(g(x)\)</span> is contractivie, then we derive,
+<span class="math display" id="eq:convex">\[\begin{align}
+
+\lim_{t\rightarrow 0^+} \frac{1}{t} || g(x + t\Delta x) - g(x) || 
+&amp;=  \lim_{t\rightarrow 0^+}  || \Delta x - \frac{\alpha}{t}[\nabla f(x + t\Delta x) - \nabla f(x)] || \\
+&amp;= || \Delta x - \alpha \nabla^2 f(x)\Delta x || \\
+&amp; \leq q||\Delta x|| \tag{3.2}
+
+\end{align}\]</span>
+<p><a href="03-Comments.html#eq:convex">(3.2)</a> holds by the contractivity and it means that <span class="math inline">\(||I_n - \alpha\nabla^2 f(x)||\leq q\)</span>. Therefore, we derive</p>
+<p><span class="math display">\[ \frac{1-q}{\alpha}I_n  \leq \nabla^2 f(x) \leq \frac{1+q}{\alpha} I_n \]</span>. Therefore <span class="math inline">\(f(x)\)</span> is strongly convex.</p>
+<ul>
+<li>Suppose <span class="math inline">\(f(x)\)</span> is strongly convex, go backward of the above proof, we assert <span class="math inline">\(g(x)\)</span> is contractive.
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div id="error-bounds" class="section level2">
+<h2><span class="header-section-number">3.3</span> Error bounds</h2>
+
+<div id="refs" class="references">
+<div>
+<p>Nesterov, Yurii. 2013. <em>Introductory Lectures on Convex Optimization: A Basic Course</em>. Vol. 87. Springer Science &amp; Business Media.</p>
+</div>
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-nesterov2013introductory">
+<p>Nesterov, Yurii. 2013. <em>Introductory Lectures on Convex Optimization: A Basic Course</em>. Vol. 87. Springer Science &amp; Business Media.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="02-Block_Coordinate_Descent.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-Comments.Rmd",
+"text": "Edit"
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
