@@ -25,7 +25,7 @@
 <meta name="author" content="Yutong Dai">
 
 
-<meta name="date" content="2017-05-19">
+<meta name="date" content="2017-05-20">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -86,7 +86,6 @@
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="02-Block_Coordinate_Descent.html"><a href="02-Block_Coordinate_Descent.html"><i class="fa fa-check"></i><b>2</b> Block Coordinate Descent Methods</a></li>
-<li class="chapter" data-level="3" data-path="03-Comments.html"><a href="03-Comments.html"><i class="fa fa-check"></i><b>3</b> Test</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -379,17 +378,13 @@ T_{n+1}(x)&amp;=2xT_{n}(x)-T_{n-1}(x).
 <p>The NAGD Methods can be also seen as a two stage iterative methods, by re-constructing <span class="math inline">\(x^{k+1} = x^k - \frac{1}{L}\nabla f[x^k + \gamma^{k-1}(x^{k-1} - x^k)] + \gamma^{k-1}(x^{k-1} - x^k)\)</span> as</p>
 <p><span class="math display">\[
 \begin{cases}
-  y^{k+1} &amp;= x^k - \alpha f(x^k)\; &amp;(1)\\
-  x^{k+1} &amp;= (1 - \gamma^k)y^{k+1} + \gamma^k y^k\; &amp;(2)
+  y^{k+1} &amp;= x^k - \alpha f(x^k)\; &amp;[1]\\
+  x^{k+1} &amp;= (1 - \gamma^k)y^{k+1} + \gamma^k y^k\; &amp;[2]
 \end{cases}
 \]</span></p>
 <ul>
-<li><ol style="list-style-type: decimal">
-<li>performs a simple step of gradient descent to go from <span class="math inline">\(x^k\)</span> to <span class="math inline">\(y^{k+1}\)</span> and then,</li>
-</ol></li>
-<li><ol start="2" style="list-style-type: decimal">
-<li>slides a little bit further than <span class="math inline">\(y^{k+1}\)</span> in the direction given by the previous iterate <span class="math inline">\(y^k\)</span>.</li>
-</ol></li>
+<li>[1] performs a simple step of gradient descent to go from <span class="math inline">\(x^k\)</span> to <span class="math inline">\(y^{k+1}\)</span> and then,</li>
+<li>[2] slides a little bit further than <span class="math inline">\(y^{k+1}\)</span> in the direction given by the previous iterate <span class="math inline">\(y^k\)</span>.</li>
 </ul>
 <p><strong>Remark: Parameter Selection.</strong> The <span class="math inline">\(\alpha,\beta,\gamma^k\)</span> is given as follows to guarantee convergence.</p>
 <p><span class="math display">\[
@@ -400,14 +395,33 @@ T_{n+1}(x)&amp;=2xT_{n}(x)-T_{n-1}(x).
 \end{align}
 \]</span> where <span class="math inline">\(\lambda^0=0, \lambda^k = \frac{1+ \sqrt{1 + 4(\lambda^{k-1})^2}}{2}\)</span>.</p>
 <p>We conclude this section by performing two methods on the problem of Example<a href="01-Gradient_Methods.html#ex:plaingd">1.1</a>.</p>
+<p><img src="demo_files/figure-html/HB-1.png" width="960" style="display: block; margin: auto;" /> <img src="demo_files/figure-html/NAGD-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="demo_files/figure-html/unnamed-chunk-10-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><strong>Remark</strong> NAGD dose not guranteen the generated <span class="math inline">\(f(x^k)\)</span> is non-increasing. For example, in Moritz Hardt’s <a href="http://blog.mrtz.org/2014/08/18/robustness-versus-acceleration.html">post</a>, an example was given.</p>
+<div class="figure" style="text-align: center"><span id="fig:non-increasing"></span>
+<img src="pics/non-increasing.png" alt="Oscillation in the function value sequence. The blue line represents the gradient method while the green one stands for NAGD method. "  />
+<p class="caption">
+Figure 1.3: Oscillation in the function value sequence. The blue line represents the gradient method while the green one stands for NAGD method.
+</p>
+</div>
 </div>
 <div id="when-does-the-nagd-methods-fail" class="section level3">
 <h3><span class="header-section-number">1.3.4</span> When does the NAGD Methods fail?</h3>
+<p>The NAGD can not be a panacea in the optimization. Believe it or not, even the gradient method can beat it in some situations. For example, Moritz Hardt points out in his <a href="http://blog.mrtz.org/2014/08/18/robustness-versus-acceleration.html">post</a> that situation changes dramatically in the presence of noise. To be specific, instead of observing <span class="math inline">\(\nabla f(x)\)</span> for any given x, we can only see <span class="math inline">\(\nabla f(x) + \epsilon\)</span>, where <span class="math inline">\(\epsilon \sim N(0,\sigma^2 I_n)\)</span>.</p>
+<p><img src="demo_files/figure-html/unnamed-chunk-11-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>A more concrete example can be found <a href="http://nbviewer.jupyter.org/gist/mrtzh/4dc77fb84c3ba8b8b220">here</a></p>
+<div class="figure" style="text-align: center"><span id="fig:robust"></span>
+<img src="pics/robust.png" alt="Robustness comparison. The blue line represents the gradient method while the green one stands for NAGD method. "  />
+<p class="caption">
+Figure 1.4: Robustness comparison. The blue line represents the gradient method while the green one stands for NAGD method.
+</p>
+</div>
+<p>Figure<a href="01-Gradient_Methods.html#fig:robust">1.4</a> shows that gradient descent method pretty quickly converges to essentially the best result that we can hope for given the noisy gradients. In contrast, NAGD goes doesn’t converge at all and it adds up errors in sort of linear fashion. In this world, gradient descent is the clear winner.</p>
 
 </div>
 </div>
 </div>
-<h3> Test</h3>
+<h3> Block Coordinate Descent Methods</h3>
 <div id="refs" class="references">
 <div id="ref-nesterov2013introductory">
 <p>Nesterov, Yurii. 2013. <em>Introductory Lectures on Convex Optimization: A Basic Course</em>. Vol. 87. Springer Science &amp; Business Media.</p>
