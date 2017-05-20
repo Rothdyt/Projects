@@ -85,7 +85,9 @@
 <li class="chapter" data-level="1.3.4" data-path="01-Gradient_Methods.html"><a href="01-Gradient_Methods.html#when-does-the-nagd-methods-fail"><i class="fa fa-check"></i><b>1.3.4</b> When does the NAGD Methods fail?</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="02-Block_Coordinate_Descent.html"><a href="02-Block_Coordinate_Descent.html"><i class="fa fa-check"></i><b>2</b> Block Coordinate Descent Methods</a></li>
+<li class="chapter" data-level="2" data-path="02-Block_Coordinate_Descent.html"><a href="02-Block_Coordinate_Descent.html"><i class="fa fa-check"></i><b>2</b> Block Coordinate Descent Methods</a><ul>
+<li class="chapter" data-level="2.1" data-path="02-Block_Coordinate_Descent.html"><a href="02-Block_Coordinate_Descent.html#parallel-variants"><i class="fa fa-check"></i><b>2.1</b> Parallel Variants</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -138,7 +140,7 @@
 <p>Problems of interest are naturally endowed with the <em>Lipschitz continous gradient</em> property, that is</p>
 
 <div class="definition">
-<span id="def:unnamed-chunk-2" class="definition"><strong>Definition 1.1 </strong></span>We can <span class="math inline">\(f(x)\)</span> is gradient Lipschitz continous if<br />
+<span id="def:unnamed-chunk-3" class="definition"><strong>Definition 1.1 </strong></span>We can <span class="math inline">\(f(x)\)</span> is gradient Lipschitz continous if<br />
 <span class="math display">\[||\nabla f(x) - \nabla f(y) || \leq L || x - y|| \forall x,y\in R^n.\]</span> Here <span class="math inline">\(||.||\)</span> means the Euclidean norm.
 </div>
 
@@ -161,7 +163,7 @@ Figure 1.1: An illustration of the gradient Lipschtiz continuous propety.
 
 
 <div class="corollary">
-<p><span id="cor:unnamed-chunk-3" class="corollary"><strong>Corollary 1.1 </strong></span>From Lemma<a href="01-Gradient_Methods.html#lem:bound">1.1</a>, we assert that if <span class="math inline">\(f(x)\)</span> is continuously differentiable and gradient Lipschtiz continuous then the Hessian of <span class="math inline">\(f(x)\)</span> is bounded by <span class="math inline">\(LI_n\)</span>, where <span class="math inline">\(I_n\)</span> is <span class="math inline">\(n\times n\)</span> unit matrix.</p>
+<p><span id="cor:unnamed-chunk-4" class="corollary"><strong>Corollary 1.1 </strong></span>From Lemma<a href="01-Gradient_Methods.html#lem:bound">1.1</a>, we assert that if <span class="math inline">\(f(x)\)</span> is continuously differentiable and gradient Lipschtiz continuous then the Hessian of <span class="math inline">\(f(x)\)</span> is bounded by <span class="math inline">\(LI_n\)</span>, where <span class="math inline">\(I_n\)</span> is <span class="math inline">\(n\times n\)</span> unit matrix.</p>
 </div>
 
 <p>A easy way to check the <em>gradient Lipschitz continous</em> assumption is to apply the Lemma<a href="01-Gradient_Methods.html#lem:L-inclusion">1.2</a><span class="citation">(Nesterov <a href="#ref-nesterov2013introductory">2013</a>)</span></p>
@@ -186,7 +188,7 @@ For matrix case, <span class="math inline">\(||A|| = \sqrt{\lambda_{max}(A^TA)},
 <p>We now only present a geometric interpretation of strong convexity and will go back to this point later when talking about the rate of convergence.</p>
 
 <div class="definition">
-<p><span id="def:unnamed-chunk-4" class="definition"><strong>Definition 1.2 </strong></span>We can <span class="math inline">\(f(x)\)</span> is strongly convex if <span class="math display">\[ f(x) \geq f(x_0) + \nabla f(x_0)^T(x-x_0) + \frac{\ell}{2} ||x-x_0||^2  \forall x,x_0\in R^n \]</span></p>
+<p><span id="def:unnamed-chunk-5" class="definition"><strong>Definition 1.2 </strong></span>We can <span class="math inline">\(f(x)\)</span> is strongly convex if <span class="math display">\[ f(x) \geq f(x_0) + \nabla f(x_0)^T(x-x_0) + \frac{\ell}{2} ||x-x_0||^2  \forall x,x_0\in R^n \]</span></p>
 </div>
 
 <p>This means that we can squeeze a parabola between the tangent plane at <span class="math inline">\(x_0\)</span> given by the gradient and the function itself. Thus, the strong convexity assumption enforce the <span class="math inline">\(f(x)\)</span> not to be too “flat”.</p>
@@ -234,13 +236,13 @@ Figure 1.2: An illustration of the strongly convex propety.
 <p>Before we answer this question, we first list the definition of a contraction mapping and the Banach fixed-point theorem.</p>
 
 <div class="definition">
-<p><span id="def:unnamed-chunk-5" class="definition"><strong>Definition 1.3  (Contraction Mapping)  </strong></span>Let <span class="math inline">\((X, d)\)</span> be a metric space. Then a map <span class="math inline">\(T : X \rightarrow X\)</span> is called a contraction mapping on <span class="math inline">\(X\)</span> if there exists <span class="math inline">\(q \in [0, 1)\)</span> such that</p>
+<p><span id="def:unnamed-chunk-6" class="definition"><strong>Definition 1.3  (Contraction Mapping)  </strong></span>Let <span class="math inline">\((X, d)\)</span> be a metric space. Then a map <span class="math inline">\(T : X \rightarrow X\)</span> is called a contraction mapping on <span class="math inline">\(X\)</span> if there exists <span class="math inline">\(q \in [0, 1)\)</span> such that</p>
 <p><span class="math display">\[ d(T(x),T(y))\leq qd(x,y) \forall x, y \in X.\]</span></p>
 </div>
 
 
 <div class="theorem">
-<span id="thm:unnamed-chunk-6" class="theorem"><strong>Theorem 1.1  (Banach Fixed Point Theorem)  </strong></span>Let <span class="math inline">\((X, d)\)</span> be a non-empty complete metric space with a contraction mapping <span class="math inline">\(T : X \rightarrow X\)</span>. Then <span class="math inline">\(T\)</span> admits a unique fixed-point <span class="math inline">\(x^*\)</span> in <span class="math inline">\(X\)</span> (i.e. <span class="math inline">\(T(x^*) = x^*\)</span>). Furthermore, <span class="math inline">\(x^*\)</span> can be found as follows: start with an arbitrary element <span class="math inline">\(x_0\)</span> in <span class="math inline">\(X\)</span> and define a sequence <span class="math inline">\(\{x_n\}\)</span> by <span class="math inline">\(x_n = T(x_{n−1})\)</span>, then <span class="math inline">\(x_n \rightarrow x^*\)</span>. Moreover, <span class="math display">\[ d(x^{*},x_{n+1})\leq qd(x^{*},x_{n}) \]</span>
+<span id="thm:unnamed-chunk-7" class="theorem"><strong>Theorem 1.1  (Banach Fixed Point Theorem)  </strong></span>Let <span class="math inline">\((X, d)\)</span> be a non-empty complete metric space with a contraction mapping <span class="math inline">\(T : X \rightarrow X\)</span>. Then <span class="math inline">\(T\)</span> admits a unique fixed-point <span class="math inline">\(x^*\)</span> in <span class="math inline">\(X\)</span> (i.e. <span class="math inline">\(T(x^*) = x^*\)</span>). Furthermore, <span class="math inline">\(x^*\)</span> can be found as follows: start with an arbitrary element <span class="math inline">\(x_0\)</span> in <span class="math inline">\(X\)</span> and define a sequence <span class="math inline">\(\{x_n\}\)</span> by <span class="math inline">\(x_n = T(x_{n−1})\)</span>, then <span class="math inline">\(x_n \rightarrow x^*\)</span>. Moreover, <span class="math display">\[ d(x^{*},x_{n+1})\leq qd(x^{*},x_{n}) \]</span>
 </div>
 
 <p>Then we establish connections between contraction mapping and linear rate of convergence through the gradient decent method, which takes the form of</p>
@@ -256,7 +258,7 @@ Figure 1.2: An illustration of the strongly convex propety.
 <p>Finally, we assert that</p>
 
 <div class="lemma">
-<span id="lem:unnamed-chunk-7" class="lemma"><strong>Lemma 1.3 </strong></span>If <span class="math inline">\(f(x)\)</span> is twice continuously differentiable, the <span class="math inline">\(g(x)\)</span> is a contraction mapping if and only if <span class="math inline">\(f(x)\)</span> is strongly convex on <span class="math inline">\(R^n\)</span>.
+<span id="lem:unnamed-chunk-8" class="lemma"><strong>Lemma 1.3 </strong></span>If <span class="math inline">\(f(x)\)</span> is twice continuously differentiable, the <span class="math inline">\(g(x)\)</span> is a contraction mapping if and only if <span class="math inline">\(f(x)\)</span> is strongly convex on <span class="math inline">\(R^n\)</span>.
 </div>
 
 
@@ -314,7 +316,7 @@ Theorem <a href="01-Gradient_Methods.html#thm:slow">1.2</a> and Theorem <a href=
 <p>Take the folowing example to illustrate.</p>
 
 <div class="example">
-<p><span id="ex:unnamed-chunk-9" class="example"><strong>Example 1.2 </strong></span>Consider using gradient descent methods to solve the problem shown below.</p>
+<p><span id="ex:unnamed-chunk-10" class="example"><strong>Example 1.2 </strong></span>Consider using gradient descent methods to solve the problem shown below.</p>
 <p><span class="math display">\[\mathop{\text{agrmin}}_{x\in R^n} \frac{1}{2}x^TAx - b^Tx\]</span></p>
 <p>where <span class="math inline">\(\ell I_n \leq A \leq L I_n\)</span>. All that gradient descent does is to compute the sequence of points</p>
 <p><span class="math display">\[ x^{k+1} = x^k - t^k \nabla f(x^k) \]</span>.</p>
@@ -396,7 +398,7 @@ T_{n+1}(x)&amp;=2xT_{n}(x)-T_{n-1}(x).
 \]</span> where <span class="math inline">\(\lambda^0=0, \lambda^k = \frac{1+ \sqrt{1 + 4(\lambda^{k-1})^2}}{2}\)</span>.</p>
 <p>We conclude this section by performing two methods on the problem of Example<a href="01-Gradient_Methods.html#ex:plaingd">1.1</a>.</p>
 <p><img src="demo_files/figure-html/HB-1.png" width="960" style="display: block; margin: auto;" /> <img src="demo_files/figure-html/NAGD-1.png" width="960" style="display: block; margin: auto;" /></p>
-<p><img src="demo_files/figure-html/unnamed-chunk-10-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="demo_files/figure-html/unnamed-chunk-11-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p><strong>Remark</strong> NAGD dose not guranteen the generated <span class="math inline">\(f(x^k)\)</span> is non-increasing. For example, in Moritz Hardt’s <a href="http://blog.mrtz.org/2014/08/18/robustness-versus-acceleration.html">post</a>, an example was given.</p>
 <div class="figure" style="text-align: center"><span id="fig:non-increasing"></span>
 <img src="pics/non-increasing.png" alt="Oscillation in the function value sequence. The blue line represents the gradient method while the green one stands for NAGD method. "  />
@@ -408,7 +410,7 @@ Figure 1.3: Oscillation in the function value sequence. The blue line represents
 <div id="when-does-the-nagd-methods-fail" class="section level3">
 <h3><span class="header-section-number">1.3.4</span> When does the NAGD Methods fail?</h3>
 <p>The NAGD can not be a panacea in the optimization. Believe it or not, even the gradient method can beat it in some situations. For example, Moritz Hardt points out in his <a href="http://blog.mrtz.org/2014/08/18/robustness-versus-acceleration.html">post</a> that situation changes dramatically in the presence of noise. To be specific, instead of observing <span class="math inline">\(\nabla f(x)\)</span> for any given x, we can only see <span class="math inline">\(\nabla f(x) + \epsilon\)</span>, where <span class="math inline">\(\epsilon \sim N(0,\sigma^2 I_n)\)</span>.</p>
-<p><img src="demo_files/figure-html/unnamed-chunk-11-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="demo_files/figure-html/unnamed-chunk-12-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>A more concrete example can be found <a href="http://nbviewer.jupyter.org/gist/mrtzh/4dc77fb84c3ba8b8b220">here</a></p>
 <div class="figure" style="text-align: center"><span id="fig:robust"></span>
 <img src="pics/robust.png" alt="Robustness comparison. The blue line represents the gradient method while the green one stands for NAGD method. "  />
@@ -421,7 +423,7 @@ Figure 1.4: Robustness comparison. The blue line represents the gradient method 
 </div>
 </div>
 </div>
-<h3> Block Coordinate Descent Methods</h3>
+<h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-nesterov2013introductory">
 <p>Nesterov, Yurii. 2013. <em>Introductory Lectures on Convex Optimization: A Basic Course</em>. Vol. 87. Springer Science &amp; Business Media.</p>
