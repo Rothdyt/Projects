@@ -1,6 +1,6 @@
 # ---------------- plot 1 contour plot ----------------
 rm(list = ls())
-load("plot/sim_n100p1000rho095.RData")
+load("results_to_report/sim_n100p1000rho095.RData")
 x<-as.matrix(x)
 y<-as.matrix(y)
 n <- nrow(x)
@@ -51,14 +51,14 @@ contour(x = beta, y = itc,z = z, nlev = 20, lty = 2,
 points(x=r1$beta_tracker,y=r1$itc_tracker,col="blue",pch=1,cex=1)
 points(x=r3$beta_tracker,y=r3$itc_tracker,col="red",pch=2,cex=0.5)
 
-leg.1 <- paste("Larger c,iterations=",r1$iteration)
-leg.3 <- paste("Smaller c,iterations=",r3$iteration)
+leg.1 <- paste("Smaller c,iterations=",r1$iteration)
+leg.3 <- paste("Larger c,iterations=",r3$iteration)
 legend("topleft",legend = c(leg.1,leg.3),col=c("blue","red"),pch=c(1,2))
 
 # -------------- plot2 leukemia 1e-2 --------------
 
 rm(list=ls())
-data <- read.csv("/Users/ym/Desktop/bs_dissertation/plot/Leukemia_c001_1e-2.csv",header = F)
+data <- read.csv("results_to_report/Leukemia_c001_1e-2.csv",header = F)
 library(stringr)
 data$V4 <- str_replace(data$V4,"q1None","q=1,cyclic")
 data$V4 <- str_replace(data$V4,"q1True","q=1,random")
@@ -110,7 +110,7 @@ p2 <- ggplot(barplot,aes(x=methods,y=data_access)) + geom_bar(stat="identity") +
 # -------------- plot3 leukemia 1e-6 --------------
 
 rm(list=ls())
-data <- read.csv("/Users/ym/Desktop/bs_dissertation/plot/Leukemia_c001_1e-6.csv",header = F)
+data <- read.csv("results_to_report/Leukemia_c001_1e-6.csv",header = F)
 library(stringr)
 data$V4 <- str_replace(data$V4,"q1None","q=1,cyclic")
 data$V4 <- str_replace(data$V4,"q1True","q=1,random")
@@ -162,7 +162,7 @@ save(p1,p2,p3,p4,file="leukemia_plot.Rdata")
 
 # ------------------------------ plot4 rho020 1e-2 ------------------------------
 rm(list=ls())
-data <- read.csv("/Users/ym/Desktop/bs_dissertation/plot/n1000p10000rho020_c001_1e-2.csv",header = F)
+data <- read.csv("results_to_report/n1000p10000rho020_c001_1e-2.csv",header = F)
 library(stringr)
 data$V4 <- str_replace(data$V4,"q16None","q=16,cyclic")
 data$V4 <- str_replace(data$V4,"q16True","q=16,random")
@@ -188,7 +188,7 @@ p1 <- ggplot(timeplot,aes(x=time+1e-1,y=relative_error,colour=label,linetype=lab
 p1
 # -------------------- plot5 n10000p1000 rho020 1e-2 -----------------------------
 rm(list=ls())
-data <- read.csv("/Users/ym/Desktop/bs_dissertation/plot/n10000p1000rho020_c001_1e-2.csv",header = F)
+data <- read.csv("results_to_report/n10000p1000rho020_c001_1e-2.csv",header = F)
 library(stringr)
 data$V4 <- str_replace(data$V4,"q16None","q=16,cyclic")
 data$V4 <- str_replace(data$V4,"q16True","q=16,random")
@@ -214,7 +214,7 @@ p2 <- ggplot(timeplot,aes(x=time+1e-1,y=relative_error,colour=label,linetype=lab
 save(p1,p2,file="sim_plot.Rdata")
 # -------------------- plot6 cr compare -----------------------------------------
 rm(list=ls())
-data <- read.csv("/Users/ym/Desktop/bs_dissertation/plot/Leukemia_cr_compare.csv",header = F)
+data <- read.csv("results_to_report/Leukemia_cr_compare.csv",header = F)
 
 relative_error <- data$V2 - min(data$V2)
 relative_error[relative_error == 0] <- 1e-6 
