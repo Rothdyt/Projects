@@ -11,11 +11,6 @@ library(leaflet)
 
 ## static data section
 load("fulldataset.Rdata")
-# houseicons <- icons(
-#   iconUrl = ifelse(fulldataset$median_price<=200,"./icons/green.png",
-#                    ifelse(fulldataset$median_price<=800,"./icons/orange.png","./icons/red.png")),
-#   iconWidth <- 10, iconHeight <- 10
-# )
 popupcontents <- paste("room type:",as.character(fulldataset$room_type),"address:",
                        as.character(fulldataset$street),sep="|")
 
@@ -38,12 +33,12 @@ ui <- dashboardPage(
       # First tab content
       tabItem(tabName = "Map",
               h2("Airbnb Rental Markets in Boston"),
-              leafletOutput("map", height = 600),
               p("Choose your map type to display:"),
               actionButton(inputId="house", label="Apt/Room"),
-              actionButton(inputId="neighborhood", label="Neighborhood"),
+              actionButton(inputId="neighborhood", label="Neighborhoods"),
               actionButton(inputId="host", label="SuperHost"),
-              uiOutput("description")
+              uiOutput("description"),
+              leafletOutput("map", height = 600)
       ),
       
       # Second tab content
