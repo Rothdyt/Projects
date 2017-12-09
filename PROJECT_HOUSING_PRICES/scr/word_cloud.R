@@ -51,22 +51,19 @@ reviews_simplified <- reviews_selected
 # as.character(z$comments)
 
 # Load the data as a corpus
-selected_id <- which(reviews_simplified$listing_id == "3353")
+selected_id <- which(reviews_simplified$listing_id == "6695")
 docs <- Corpus(VectorSource(reviews_simplified[selected_id,]$comments))
 inspect(docs)
 # deal with special characters
 toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
 docs <- tm_map(docs, toSpace, "\n")
-# docs <- tm_map(docs, toSpace, "@")
-# docs <- tm_map(docs, toSpace, "\\|")
-inspect(docs)
+docs <- tm_map(docs, tolower)
 # cleaning the text
 ## stop-words
 docs <- tm_map(docs, removeWords, stopwords("english"))
 docs <- tm_map(docs, removeWords, stopwords("spanish"))
 docs <- tm_map(docs, removeWords, stopwords("french"))
-docs <- tm_map(docs, removeWords, stopwords("french"))
-docs <- tm_map(docs, removeWords, c("the"))
+docs <- tm_map(docs, removeWords, c("the","boston"))
 # term-documnet matrix
 dtm <- TermDocumentMatrix(docs)
 m <- as.matrix(dtm)
@@ -75,5 +72,5 @@ d <- data.frame(word = names(v),freq=v)
 head(d, 10)
 set.seed(1234)
 wordcloud(words = d$word, freq = d$freq, min.freq = 1,
-          max.words=200, random.order=FALSE, rot.per=0.35, 
+          max.words=50, random.order=FALSE, rot.per=0.35, 
           colors=brewer.pal(8, "Dark2"))

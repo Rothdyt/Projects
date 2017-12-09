@@ -44,8 +44,7 @@ ui <- dashboardPage(
       menuItem(text="Explore Numerical Variabels", tabName = "num"),
       menuItem(text="Explore Categorical Variabels", tabName = "cat"),
       menuItem(text="Reviews", tabName="review"),
-      menuItem(text="References", tabName = "References"),
-      menuItem(text="Contact", tabName = "Contact")
+      menuItem(text="About", tabName = "About")
     )
   ),
   dashboardBody(
@@ -169,44 +168,45 @@ ui <- dashboardPage(
       ),
       # reference
       tabItem(
-        tabName = "References",
-        h2("References"),
-        box(
-          tags$p(tags$b("Figures inspired by:"),
-                 tags$ul(
-                   tags$li(tags$a(href="https://www.kaggle.com/kostyabahshetsyan/boston-airbnb-visualization",
-                                  "Boston Airbnb visualization")), 
-                   tags$li(tags$a(href="https://www.kaggle.com/ewenhen/inside-airbnb-boston",
-                                  "Inside Airbnb: Boston"))
-                 ))
-        ),
-        box(
-          tags$p(tags$b("Materials realted to Rshiny:"),
-                 tags$ul(
-                   tags$li(tags$a(href="http://shiny.rstudio.com/tutorial/",
-                                  "Shiny")), 
-                   tags$li(tags$a(href="https://rstudio.github.io/shinydashboard/index.html",
-                                  "shinydashboard")),
-                   tags$li(tags$a(href="http://rstudio.github.io/leaflet/",
-                                  "Leaftlet for R")),
-                   tags$li(tags$a(href="https://plot.ly/r/",
-                                  "Plotly R Library"))
-                 )             
-              )
-        )
-      ),
-      tabItem(
-        tabName = "Contact",
+        tabName = "About",
         h2("App Info"),
-        box(
+        fluidRow(box(
           background = "black",
           p(
             tags$ul(
               tags$li("This shiny app is designed for the STAT 425 Final Project."),
-              tags$li("If you have any question, please contact the author",a(href="mailto:rothdyt@gmail.com"," Yutong Dai")) 
+              tags$li("If you have any question, please contact the author",a(href="mailto:rothdyt@gmail.com"," Yutong Dai."))
             )
           )
-          
+        )),
+        h2("References"),
+        fluidRow(        
+          box(
+            background = "black",
+            tags$p(tags$b("Figures inspired by:"),
+                   tags$ul(
+                     tags$li(tags$a(href="https://www.kaggle.com/kostyabahshetsyan/boston-airbnb-visualization",
+                                    "Boston Airbnb visualization")), 
+                     tags$li(tags$a(href="https://www.kaggle.com/ewenhen/inside-airbnb-boston",
+                                    "Inside Airbnb: Boston"))
+                   ))
+        )),
+        fluidRow(
+          box(
+            background = "black",
+            tags$p(tags$b("Materials realted to Rshiny:"),
+                   tags$ul(
+                     tags$li(tags$a(href="http://shiny.rstudio.com/tutorial/",
+                                    "Shiny")), 
+                     tags$li(tags$a(href="https://rstudio.github.io/shinydashboard/index.html",
+                                    "shinydashboard")),
+                     tags$li(tags$a(href="http://rstudio.github.io/leaflet/",
+                                    "Leaftlet for R")),
+                     tags$li(tags$a(href="https://plot.ly/r/",
+                                    "Plotly R Library"))
+                   )             
+            )
+          )
         )
       )
       
