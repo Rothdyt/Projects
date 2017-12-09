@@ -43,7 +43,10 @@ rule <- reviews$listing_id %in% selected_houses_id
 reviews_selected <- reviews[rule,]
 reviews_selected <- reviews_selected[order(reviews_selected$listing_id),]
 # delete "id","date","reviewer_id","reviewer_name"
-reviews_simplified <- reviews_selected[,-c(2,3,4,5)]
+reviews_selected <- reviews_selected[,c(1,6)]
+reviews_selected$comments <- as.character(reviews_selected$comments)
+reviews_simplified <- reviews_selected
+# save(reviews_simplified,file="./Shinyapp/reviews.Rdata")
 # z <- reviews[reviews$listing_id == "1365335",]
 # as.character(z$comments)
 

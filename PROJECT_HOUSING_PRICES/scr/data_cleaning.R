@@ -30,6 +30,8 @@ library(dplyr)
 load("./data/calendar_selected.Rdata")
 calendar_selected$price <- gsub('[$,]', '', calendar_selected$price)
 calendar_selected$price <- as.numeric(calendar_selected$price)
+# price <- calendar_selected[,c(1,2,4)]
+# save(price,file="./Shinyapp/price.Rdata")
 calendar_summarized <- calendar_selected %>%
   group_by(calendar_selected$listing_id) %>%
   summarise(ave_price=mean(price,na.rm=T),
