@@ -1,0 +1,5 @@
+#!/bin/zsh
+current_path=$(cd `dirname $0`;pwd)
+cd $current_path
+python main.py
+
