@@ -8,7 +8,7 @@ from torch.autograd import Variable
 class Encoder(nn.Module):
     """
     Encoder:
-        Use the pretrained resnet152 replace the last fc layer and re-train the last fc layer.
+        Use the pretrained resnet101 replace the last fc layer and re-train the last fc layer.
     """
 
     def __init__(self, attention=False, embed_size=256, encoded_image_size=14):
@@ -29,7 +29,6 @@ class Encoder(nn.Module):
             for param in self.resnet.parameters():
                 param.requires_grad = False
             self.resnet.fc = nn.Linear(resnet.fc.in_features, embed_size)
-            self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)        
 
     def forward(self, images):
         """
@@ -49,7 +48,6 @@ class Encoder(nn.Module):
             return out
         else:
             out = self.resnet(images)  # (batch_size, embed_size)
-            out = self.bn(out)
             return out
 
 
@@ -78,30 +76,29 @@ class StatefulLSTM(nn.Module):
 
 
 class LockedDropout(nn.Module):
-    def __init__(self, dropout=0):
+    def __init__(self):
         super(LockedDropout, self).__init__()
         self.m = None
-        self.dropout = dropout
 
     def reset_state(self):
         self.m = None
 
-    def forward(self, x, train=True):
+    def forward(self, x, dropout=0.5, train=True):
         if train == False:
             return x
         if(self.m is None):
-            self.m = x.data.new(x.size()).bernoulli_(1 - self.dropout)
-        mask = self.m / (1 - self.dropout)
+            self.m = x.data.new(x.size()).bernoulli_(1 - dropout)
+        mask = self.m / (1 - dropout)
 
         return mask * x
 
 
 class LSTMBlock(nn.Module):
-    def __init__(self, in_size, out_size, dropout=0):
+    def __init__(self, in_size, out_size):
         super(LSTMBlock, self).__init__()
         self.lstm = StatefulLSTM(in_size, out_size)
-        # self.bn = nn.BatchNorm1d(out_size)
-        self.locked_dropout = LockedDropout(dropout=dropout)
+        self.bn = nn.BatchNorm1d(out_size)
+        self.locked_dropout = LockedDropout()
 
     def reset_state(self):
         self.lstm.reset_state()
@@ -109,21 +106,21 @@ class LSTMBlock(nn.Module):
 
     def forward(self, x, train=True):
         x = self.lstm(x)
-        # x = self.bn(x)
+        x = self.bn(x)
         x = self.locked_dropout(x, train=train)
         return x
 
 
 class Decoder(nn.Module):
-    def __init__(self, embed_size, hidden_size, vocab_size, num_layers=1, max_seq_length=20, stateful=True, dropout=0):
+    def __init__(self, embed_size, hidden_size, vocab_size, num_layers=1, max_seq_length=20, stateful=True):
         super(Decoder, self).__init__()
         self.stateful = stateful
         self.num_layers = num_layers
         self.embed = nn.Embedding(vocab_size, embed_size)
         if stateful:
-            self.lstm_block1 = LSTMBlock(embed_size, hidden_size, dropout)
+            self.lstm_block1 = LSTMBlock(embed_size, hidden_size)
             if self.num_layers >= 2:
-                self.lstm_blocks = nn.ModuleList([LSTMBlock(hidden_size, hidden_size, dropout) for i in range(num_layers-1)])
+                self.lstm_blocks = nn.ModuleList([LSTMBlock(hidden_size, hidden_size) for i in range(num_layers-1)])
         # self.lstm1 = StatefulLSTM(embed_size, hidden_size)
         # self.bn_lstm1 = nn.BatchNorm1d(hidden_size)
         # self.dropout1 = LockedDropout()
@@ -145,6 +142,7 @@ class Decoder(nn.Module):
                 for i, _ in enumerate(self.lstm_blocks):
                     self.lstm_blocks[i].reset_state()
 
+
     def forward(self, features, captions, lengths, train=True):
         """Decode image feature vectors and generates captions."""
         self.train = train
@@ -155,28 +153,29 @@ class Decoder(nn.Module):
             self.reset_state()
             outputs = []
             for i in range(no_of_timesteps):
-                h = self.lstm_block1(embeddings[:, i, :], train=train)
+                h = self.lstm_block1(embeddings[:, i, :], train = train) 
                 #print('h shape', h.shape)
                 if self.num_layers >= 2:
                     for i, _ in enumerate(self.lstm_blocks):
-
+                        h = self.lstm_blocks[i](h, train = train)
+                #print('h shape2', h.shape)
                 outputs.append(h)
 
             outputs = torch.stack(outputs)  # (time_steps,batch_size,features)
             # outputs = outputs.permute(1, 2, 0)  # (batch_size,features,time_steps) [3, 256, 17]
 
             # Jazzik Nov. 18, 12:16pm
-            outputs = outputs.permute(1, 0, 2)  # (batch_size, time_steps, features)
+            outputs = outputs.permute(1, 0, 2) # (batch_size, time_steps, features)
             packed_outputs = []
             for i in range(outputs.shape[0]):
                 packed_outputs.append(outputs[i][:lengths[i]])
             packed_outputs = torch.cat(packed_outputs, 0)
-     
+ 
             return self.linear(packed_outputs)
             #h = self.dropout(h)
 
         else:
-            # Test on batch_size = 3, embeddings.shape = [3, 17, 256], where
+            # Test on batch_size = 3, embeddings.shape = [3, 17, 256], where 
             # 17 the max(lengths) + 1
             packed = pack_padded_sequence(embeddings, lengths, batch_first=True)
             hiddens, _ = self.lstm(packed)

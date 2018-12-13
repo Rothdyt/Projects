@@ -25,9 +25,9 @@ def load_image(image_path, transform=None):
     image = image.resize([224, 224], Image.LANCZOS)
     
     if transform is not None:
-        print('iamge shape1', image.size)
+       #  print('iamge shape1', image.size)
         image = transform(image).unsqueeze(0)
-        print('image shape2', image.shape)
+       #  print('image shape2', image.shape)
     return image
 
 
@@ -81,8 +81,8 @@ if __name__ == '__main__':
     PATH = '/home/ubuntu/final_project/'
     parser = argparse.ArgumentParser()
     parser.add_argument('--image', type=str, required=True, help='input image for generating caption')
-    parser.add_argument('--encoder_path', type=str, default=PATH + 'model/encoder-9-3000.ckpt', help='path for trained encoder')
-    parser.add_argument('--decoder_path', type=str, default=PATH + 'model/decoder-9-3000.ckpt', help='path for trained decoder')
+    parser.add_argument('--encoder_path', type=str, default=PATH + 'model/encoder-1-3000.ckpt', help='path for trained encoder')
+    parser.add_argument('--decoder_path', type=str, default=PATH + 'model/decoder-1-3000.ckpt', help='path for trained decoder')
     parser.add_argument('--vocab_path', type=str, default=PATH + 'data/vocab.pkl', help='path for vocabulary wrapper')
 
     # Model parameters (should be same as paramters in train.py)

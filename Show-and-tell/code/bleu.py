@@ -21,6 +21,7 @@ def get_image_name(jsonPath):
 def bleu_score(input_imgs_path, generated_captions, name_caption_frame):
     imgName = input_imgs_path.split('/')[-1]
     captions = list(name_caption_frame[name_caption_frame['file_name']==imgName]['caption'])
+#    print(captions)
     references = []
     for i in range(5):
         temp = nltk.word_tokenize(captions[i].lower())

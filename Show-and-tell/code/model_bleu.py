@@ -65,7 +65,7 @@ def test(args):
     train_image_dir = '/home/ubuntu/final_project/data/train2014'
     test_image_dir = '/home/ubuntu/final_project/data/val2014'
     # print('args.eval',args.eval==1)    
-    if args.eval==1:
+    if args.eval=='eval':
         print('eval bleu')
         jsonPath = test_json_path
         image_dir = test_image_dir
@@ -91,8 +91,8 @@ def test(args):
     decoder = decoder.to(device)
 
     # load the trained model parameters
-    encoder.load_state_dict(torch.load(args.encoder_path))
-    decoder.load_state_dict(torch.load(args.decoder_path))
+    encoder.load_state_dict(torch.load(args.encoder_path, map_location = device))
+    decoder.load_state_dict(torch.load(args.decoder_path, map_location = device))
 
     name_caption_frame = get_image_name(jsonPath)
     unique_image_names = pd.unique(name_caption_frame['file_name'])
@@ -131,8 +131,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # parser.add_argument('--image_dir', type=str, required=True, help='input image directory for generating bleu score')
     parser.add_argument('--eval', type=str, required=True, help='Test bleu or train bleu?')
-    parser.add_argument('--encoder_path', type=str, default=PATH + 'model/encoder-10-3000.ckpt', help='path for trained encoder')
-    parser.add_argument('--decoder_path', type=str, default=PATH + 'model/decoder-10-3000.ckpt', help='path for trained decoder')
+    parser.add_argument('--encoder_path', type=str, default=PATH + 'model/encoder-4-3000.ckpt', help='path for trained encoder')
+    parser.add_argument('--decoder_path', type=str, default=PATH + 'model/decoder-4-3000.ckpt', help='path for trained decoder')
     parser.add_argument('--vocab_path', type=str, default=PATH + 'data/vocab.pkl', help='path for vocabulary wrapper')
 
     # Model parameters (should be same as paramters in train.py)

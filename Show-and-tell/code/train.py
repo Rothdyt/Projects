@@ -10,7 +10,7 @@ Desscription:
 
 import torch
 import torchvision.transforms as transforms
-import os
+import os 
 import sys
 import pickle
 import numpy as np
@@ -25,10 +25,19 @@ import argparse
 from model_V2_dropout0 import Encoder, Decoder
 from torch.nn.utils.rnn import pack_padded_sequence
 import torch.nn as nn
-
+import logging
 
 # Device configuration
 
+
+log_level = logging.INFO
+logger = logging.getLogger()
+logger.setLevel(log_level)
+handler = logging.FileHandler("loss_5epochs.log")
+handler.setLevel(log_level)
+formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 def main():
     # Create model directory
@@ -44,30 +53,30 @@ def main():
     batch_size = 128
     num_workers = 4
     learning_rate = 0.001
-
+    
     # Decoder
     embed_size = 512
     hidden_size = 512
-    num_layers = 3  # number of lstm layers
+    num_layers = 3 # number of lstm layers
     num_epochs = 5
     log_step = 10
     save_step = 3000
-
+    
     # transfer learning path to pretrained model, load state_dict
     encoder_path = './model/encoder-5-3000.ckpt'
     decoder_path = './model/decoder-5-3000.ckpt'
-    start_epoch = 5
+    start_epoch = 0
     ######################
 
     if not os.path.exists(model_path):
         os.makedirs(model_path)
 
     # Image preprocessing, normalization for the pretrained resnet
-    transform = transforms.Compose([
+    transform = transforms.Compose([ 
         transforms.RandomCrop(crop_size),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406),
+        transforms.RandomHorizontalFlip(), 
+        transforms.ToTensor(), 
+        transforms.Normalize((0.485, 0.456, 0.406), 
                              (0.229, 0.224, 0.225))])
 
     # Load vocabulary wrapper
@@ -78,13 +87,14 @@ def main():
     coco = CocoDataset(image_dir, caption_path, vocab, transform)
     dataLoader = torch.utils.data.DataLoader(coco, batch_size, shuffle=True, num_workers=4, collate_fn=coco_batch)
 
+
     # Declare the encoder decoder
     encoder = Encoder(embed_size=embed_size).to(device)
     decoder = Decoder(embed_size=embed_size, hidden_size=hidden_size, vocab_size=len(vocab), num_layers=num_layers, stateful=False).to(device)
-
-    encoder.load_state_dict(torch.load(encoder_path))
-    decoder.load_state_dict(torch.load(decoder_path))
-
+    
+    # encoder.load_state_dict(torch.load(encoder_path))
+    # decoder.load_state_dict(torch.load(decoder_path))
+    
     encoder.train()
     decoder.train()
     # Loss and optimizer
@@ -109,15 +119,14 @@ def main():
             loss = criterion(outputs, targets)
             decoder.zero_grad()
             encoder.zero_grad()
-
+            
             loss.backward(retain_graph=True)
 
             optimizer.step()
 
             # Print log info
             if i % log_step == 0:
-                print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Perplexity: {:5.4f}'
-                      .format(epoch+start_epoch, num_epochs+start_epoch, i, total_step, loss.item(), np.exp(loss.item())))
+                logger.info(('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Perplexity: {:5.4f}'.format(epoch+start_epoch, num_epochs+start_epoch, i, total_step, loss.item(), np.exp(loss.item()))))
 
             # Save the model checkpoints
             if (i+1) % save_step == 0:
@@ -127,7 +136,6 @@ def main():
                     model_path, 'encoder-{}-{}.ckpt'.format(epoch+1+start_epoch, i+1)))
     # torch.save(decoder, os.path.join(model_path, 'decoder-final'))
     # torch.save(encoder, os.path.join(model_path, 'encoder-final'))
-
 
 if __name__ == "__main__":
     print('Start Training')
