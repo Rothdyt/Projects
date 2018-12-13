@@ -1,0 +1,315 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Stylish Article
+% LaTeX Template
+% Version 2.1 (1/10/15)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Mathias Legrand (legrand.mathias@gmail.com) 
+% With extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[fleqn,10pt]{SelfArx} % Document font size and equations flushed left
+
+\usepackage[english]{babel} % Specify a different language here - english by default
+\usepackage{graphics}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{natbib}
+%\addbibresource{biblatex-examples.bib}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage[mathcal]{eucal}
+\usepackage{natbib}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+}
+\setlength\parindent{0pt}
+
+%----------------------------------------------------------------------------------------
+%	COLUMNS
+%----------------------------------------------------------------------------------------
+
+\setlength{\columnsep}{0.55cm} % Distance between the two columns of text
+\setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
+
+%----------------------------------------------------------------------------------------
+%	COLORS
+%----------------------------------------------------------------------------------------
+
+\definecolor{color1}{RGB}{0,0,90} % Color of the article title and sections
+\definecolor{color2}{RGB}{0,20,20} % Color of the boxes behind the abstract and headings
+
+%----------------------------------------------------------------------------------------
+%	HYPERLINKS
+%----------------------------------------------------------------------------------------
+
+\usepackage{hyperref} % Required for hyperlinks
+\hypersetup{hidelinks,colorlinks,breaklinks=true,urlcolor=color2,citecolor=color1,linkcolor=color1,bookmarksopen=false,pdftitle={Title},pdfauthor={Author}}
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+\JournalInfo{STAT534 Final Report} % Journal information
+\Archive{} % Additional notes (e.g. copyright, DOI, review/research article)
+
+\PaperTitle{Show and Tell: A Neural Image Caption Generator} % Article title
+
+\Authors{Zhejian Peng\textsuperscript{1}, Yutong Dai\textsuperscript{2}, Qi Tang\textsuperscript{1}, Xiang Cui\textsuperscript{2}, Shuhui Guo\textsuperscript{2}} % Authors
+\affiliation{\textsuperscript{1}\textit{Department of Industrial Engineering, University of Illinois at Urbana Champaign, Champaign, IL}} % Author affiliation
+\affiliation{\textsuperscript{2}\textit{Department of Statistics, University of Illinois at Urbana Champaign, Champaign, IL}} % Author affiliation
+% \affiliation{*\textbf{Corresponding author}: xiangc5@illinois.edu} % Corresponding author
+
+\Keywords{Convolutional Neural Network, Recurrent Neural Network} % Keywords - if you don't want any simply remove all the text between the curly brackets
+\newcommand{\keywordname}{Keywords} % Defines the keywords heading name
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\Abstract{This is a project report for reproducing and improving the methods proposed in the paper \textit{Show and Tell: A Neural Image Caption Generator}.}
+
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\flushbottom % Makes all text pages the same height
+
+\maketitle % Print the title and abstract box
+
+\tableofcontents % Print the contents section
+
+\thispagestyle{empty} % Removes page numbering from the first page
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section{Introduction} % The \section*{} command stops section numbering
+
+% \addcontentsline{toc}{section}{Introduction} 
+
+In the area of artificial intelligence, automatically describing the content on an image using properly formed English sentences is a challenging task. Leveraging the advances in recognition of objects allows us to drive natural language generation systems, but the current approaches have limited ability in their expressivity. Most closely, neural networks are used to co-embed images and sentences together, but they didn't attempt to generate novel descriptions. For this paper, the authors combined deep convolutional nets for image classification with recurrent networks for sequence modeling to create a single end-to-end network that generates descriptions of images. They take the image $I$ as input and produced a target sequence of words $S = \{S_1, S_2, \ldots\}$ by directly maximizing the likelihood $p(S|I)$. They used a deep convolution neural network as an encoder function to produce a rich representation of the input image by embedding it to a fixed-length vector. This embedding vector will be used as the initial hidden state of a decoder recurrent network that will be used to generated the target sentence. They present an end-to-end system for this sentence caption generation problem. Their neural network is trainable using stochastic gradient descent and also combines the current state-of-art sub-networks for image and language models. These sub-models could be pre-trained on larger datasets and take advantage of additional data. Finally, through experiment results, they show their method could perform significantly better compared with the current state-of-art approaches.
+
+
+
+
+%------------------------------------------------
+
+\section{Model architectures}
+
+The goal is to directly maximize the probability of the correct description given the image by:
+
+\begin{align}
+\theta^* = \text{arg } \underset{\theta}{\text{max}} \underset{(I^i,S^i)\in D}{\sum} \text{log}p(S^i|I^i,\theta)
+\end{align}
+
+where $(I^i,S^i)$ is \textit{image-caption} pair, $D$ is training dataset and $\theta$ is the parameter for our model. Applying the chain rule to model the joint probability $\text{log}p(S|I,\theta)$ over $S$, we could get
+
+\begin{align}
+\text{log}p(S|I,\theta) = \sum_{t=0}^N \text{log} p(S_t|I, \theta, S_0, \ldots, S_{t-1}),
+\end{align}
+
+where $S_t$ is the t-th word in caption $S$. So the authors in \cite{vinyals2015show}, model the conditional probability $p(S_t|I, \theta, S_0, \ldots, S_{t-1})$ using the LSTM, which is a special form of recurrent neural network. To be more specific, at the time-step $t-1$, treat the hidden state $h_{t-1}$ as a nonlinear representation of $I, \theta, S_0, \ldots, S_{t-2}$ and given the word $S_{t-1}$, then calculate $h_{t-1} = f(h_{t-2}, S_{t-1})$. Finally, model $p(S_t|I, \theta, S_0, \ldots, S_{t-1})$ using
+$p_{t} = \text{Softmax}(h_{t-1})$. The $p_t$ is the conditional probability distribution over the whole dictionary, which suggests the word to generate at the time-step $t$.
+
+One more thing need to be specifically addressed here is that authors in  \cite{vinyals2015show} used Convolution Neural Network to initialize $S_0$.
+
+% The core of the LSTM network is a memory cell $c$ which memorizes the inputs have been observed up to this time step. The behavior of this memory cell is controlled by three gates: the forget gate $f$ which controls whether to forget the current cell value, the input gate $i$ which controls reading input and the output gate $o$ which controls whether to output new cell value. The definition of this network structure is shown:
+% \begin{align}
+% i_t &= \sigma(W_{ix}x_t + W_{im} m_{t-1})\\
+% f_t &= \sigma(W_{fx}x_t + W_{fm} m_{t-1})\\
+% o_t &= \sigma(W_{ox}x_t + W_{om} m_{t-1})\\
+% c_t &= f_t \odot c_{t-1} + i_t \odot h(W_{cx}x_t + W_{cm} m_{t-1})\\
+% m_t &= o_t \odot c_t \quad p_{t} = \text{Softmax}(m_t)
+% \end{align}
+% where $\odot$ represents product with a gate value, and various $W$ are parameters. The nonlinearities are sigmoid $\sigma()$ and hyperbolic tangent $h()$. The last $p_{t}$ is used to produce a probability over all words.
+
+\section{Training Methods}
+
+We firstly provide a brief overview on data preprocessing procedures and then discuss how we trained the model.
+
+
+\textbf{Data Preprocessing}
+We used \textit{MSCOCO 2014} datasets to train and test our model. MSCOCO 2014 dataset contains 82783 training images and 40504 testing images. Each image come with 5 human captions. In the validation set, there are 128 images have 6 human captions and 3 images have 7 human captions, but this shouldn’t affect our result much.
+
+In order to load this dataset, we wrote our own dataset class \verb|CoCoDataset()| in the \verb|data_loader.py|. We also customized a dataLoader to read a tuple of (images, captions, caption lengths) in batch. Since human captions have various lengths, so we padded all the captions to the maximal length in each batch. The caption lengths variables are used to record the true length of a caption, which is beneficial when computing losses. We also wrote a \verb|coco_batch| function to create mini-batch tensors from a list of tuples. For data augmentation, we used a random crop with the size of (224, 224), random horizontal flip and normalization. Finally, we convert all image to ‘RGB’ format, so we always have 3 channels. In order to accelerate our training speed, we also wrote a \verb|resize.py| to resize and save all the training image to the size of (256, 256, 3).We use 256 because the image size needs to be greater than 224 for the random cropping. 
+
+The actual training can be divided into two stages, using the CNN to code image and using the LSTM to generate captions. Also the loss is calculate after we generate the caption for each training $(I,S)$ pair. Details are described below.
+
+\textbf{Image Encoding}
+
+\verb|resnet152| pre-trained on the ImageNet is used a image encoder, where we only change and trained the last fully connected layer to accommodate our needs that pass the image embedding to as the input for the LSTM at the time-step 0. In later experiments, we also attempted to fine tune the last block of the \verb|resnet152| to the how this affects the final model performance.
+
+
+\textbf{Caption Generation}
+Firstly, we one-hot encode all captions to vectors to desired fixed size, which was done by the file \verb|generate_vocab_dict.py|. To be specific, We tokenized all the captions and calculate the word frequency. Then set a threshold on frequency and merge those less-frequent words to the \verb|<<unknown>>| token. We also introduced \verb|<<start>>|, \verb|<<end>>| and \verb|<<padding>>|tokens. Finally we derived a vocabulary, \verb|vocab|, of $9957$ different tokens. 
+
+Second, to train the LSTM neural nets, we fed each one-hot-encoded word $S_t, t=1,2,...,N$ vector to a word-embedding layer, which produces a word embedding vector. Then we sent this word embedding vector to the LSTM cell to predict $S_{t+1}$. This procedure can be formally described below,
+
+\begin{align}
+ x_{-1} &= \text{CNN}(I) \nonumber \\
+ x_{t} &= W_eS_{t} \nonumber\\
+ h_{t} &= \text{LSTM}(x_t)\qquad t \in \{0,1,2,...,N\}\nonumber\\
+p_{t+1} &= \text{Softmax}(h_t) 
+\end{align}
+
+The $Class$ \verb|Decoder|  in the file  \verb|model_V2_dropout0.py| implements aforementioned procedures. In each batch, since we padded all the captions, so we stripped the \verb|<<padding>>| before we fed captions to the LSTM cells.
+
+\textbf{Loss and Metric.} The loss is calculate as
+
+\begin{align}
+L = \underset{(I^i,S^i)\in D}{\sum} L(I^i,S^i) = \underset{(I^i,S^i)\in D}{\sum} \sum_{t=1}^{N^i} -\text{log} p_t(S_t^i).
+\end{align}
+
+We use the training loss as a criteria to terminate the training process, that is when there is no significant improvement on the training loss we stop the training.
+
+We mainly use BLEU-4 scores, which are calculated on the validation datasets, as the criteria to evaluate the quality of the generated captions, where the captions are generated based on the maximal probability rule.  To be more specific, $\text{Word}_t = \text{Vocab}[\arg\max (p_t)]$, where the \verb|Vocab| is generated from the one-hot encoded captions.
+%------------------------------------------------
+
+\section{Experimental Results}
+
+
+
+We did following groups of experiments.
+
+\begin{itemize}
+
+    \item Use various number of the LSTM layers to see how the complexity of our decoder affects the training loss and BLEU-4 score.
+
+    \item Add dropout layer at the end of LSTM layers and use different dropout rate to see how training loss and the BLEU-4 score are affected.
+
+    \item Fine tune the \verb|resnet152| to see how much we can further improve the training loss and BLEU-4 score.
+
+    \item Compare the model we implemented here and the advanced version proposed by \cite{sat} to conceptually see how attention affect the performance. 
+\end{itemize}
+
+\textbf{Choice of Hyperparameters}
+
+We used \verb|resnet152| with fine tuned last fully connected layers as our image encoder throughout the most of the experiments, only one exception will be mentioned later.
+\begin{itemize}
+
+    \item Using 1, 3, 5 and 10 layers of LSTM cell(s) (without dropout)
+
+    \item Using 0.2, 0.5 dropout rate in the decoder with 3 layers of LSTM cells
+
+    \item Comparing the locked dropout with the normal dropout in the decoder with 3 layers of LSTM cells
+
+    \item no dropout for both the model we implemented (\verb|resnet152| + 3-layered-LSTM) and the one proposed in \cite{sat} 
+
+\end{itemize}
+
+ Lastly. We compare the encoder with the only fine-tuned last fully connected layer with one with the fine-tuned last block and the last fully connected layer. 
+
+\textbf{Traning and Validaiton Results.}
+
+First, we present the loss curve for the model with/without attention and corresponding BLEU-4 score gain the basic ideas. The rest of comparisons are similar, hence will be summarized in tables for simplicity.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{loss.jpeg}
+\includegraphics[width=0.5\textwidth]{bleu.jpeg}
+\caption{The loss curve and the average BLEU-4 score for two models.}\label{fig:1}
+\end{figure}
+
+The \autoref{layers} tries to show the impact of LSTM layers. We can see the 3 Layers gives the best BLEU-4 score.
+
+
+\begin{table}[H]
+\begin{tabular}{lll}
+\hline
+number of LSTM layers & BlEU-4 Score & Training Loss \\ \hline
+1                     & 0.33103      & 1.8058        \\ \hline
+3                     & 0.33109      & 1.9128        \\ \hline
+5                     & 0.32192      & 2.1484        \\ \hline
+10                    & 0.247716     & 4.5569        \\ \hline
+\end{tabular}
+\caption{Compare how number of LSTM layers affects the training loss and BLUE-4 scores.}\label{layers}
+\end{table}
+
+The \autoref{dropout} shows that only use dropout at the image encoder will give the best BLEU-4 score.
+
+\begin{table}[H]
+\begin{tabular}{llll}
+\hline
+Apply & Dropout Rate & BlEU-4 Score & Training Loss \\ \hline
+Encoder&          0.2           &   0.33117  & 1.9500        \\ \hline
+Encoder&          0.5      &    0.33692   &   1.7687     \\ \hline
+Decoder&          0.2        &  0.32837    &   3.4942      \\ \hline
+Decoder&          0.5       &   0.32675   &   5.5146     \\ \hline
+Both &  0.2                 & 0.33550      & 3.3468       \\ \hline
+Both &   0.5                &  0.32923     &     5.4706  \\ \hline
+\end{tabular}
+\caption{Compare how dropout rate affects the training loss and BLUE-4 scores.}\label{dropout}
+\end{table}
+
+The \autoref{ft} shows that fine tuning the last block and the last fully connected layer indeed improves the model a lot. Of course, it takes more time to train.
+
+\begin{table}[H]
+\begin{tabular}{llll}
+\hline
+Fine-tune  & BlEU-4 Score & Training Loss \\ \hline
+Last fc layer&         0.33117  & 1.9500        \\ \hline
+Last fc layer + Last Block&           0.35371     &   1.7059      \\ \hline
+\end{tabular}
+\caption{Compare how fine-tune affects the training loss and BLUE-4 scores.}\label{ft}
+\end{table}
+
+
+\textbf{Inference: Caption Generation.} We do observe that generally the model with attention mechanism can generate captions making more sense, but the model we trained here seems to have better generalization ability. For example, we fed the following figure that is not from the validation set to both models. The generated caption for our model is \verb|<<start>>| \textbf{two dogs are playing with a frisbee in the grass.} \verb|<<end>>| while the attention model can only generate \verb|<<start>>|  \textbf{a dog with a frisbee in its mouth.}\verb|<<end>>|. It shows that our model can identify two dogs while the model with attention can only identify one.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{dogs.png}
+\end{figure}
+
+
+
+
+\textbf{Computation Time.} The experiments are done separately on the AWS and Blue waters. The total time spent on the Blue waters are approximately 547 hours while we spent around 400 hours on the AWS.
+
+\textbf{Supplements.} All the supporting code can be found at the \href{https://github.com/Rothdyt/Projects/tree/master/Show-and-tell}{Github} repository.
+
+
+\section{Discussion}
+For this final project, our group implemented the Neural Image Caption(NIC) generator model, one end-to-end neural network that could automatically generate a reasonable description for the input image using plain English. This neural network model combines a convolution neural network(CNN) with a recurrent neural network(RNN). The CNN could encode the image into a compact representation and the RNN as a decoder could generate a  meaningful sequence. Experiments are based on the \textit{MSCOCO 2014} dataset. Reasonable captions generated from our trained model shows that the NIC model is robust in qualitative results. Also different choices of hyper-parameters are tested, where the best test BLEU-4 score is 0.35371 comparing to the theoretical BLEU-4 0.301. For the future, we believe better encoding and decoding neural network could be further developed along with  refined image representation, RNN architecture and improved optimization algorithms. Therefore, the performance of such kind of Neural Image Caption models is expected to be better than human's.
+
+%------------------------------------------------
+% \phantomsection
+% \section*{Acknowledgments} % The \section*{} command stops section numbering
+
+
+% \addcontentsline{toc}{section}{Acknowledgments} % Adds this section to the table of contents
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+%\phantomsection
+%\bibliographystyle{plain}
+%\bibliography{sample}
+\nocite{*}
+\bibliography{sample}{}
+\bibliographystyle{plain}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
