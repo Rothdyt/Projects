@@ -284,13 +284,13 @@ Last fc layer + Last Block&           0.35371     &   1.7059      \\ \hline
 
 
 
-\textbf{Computation Time.} The experiments are done separately on the AWS and Blue waters. The total time spent on the Blue waters are approximately 547 hours while we spent around 400 hours on the AWS.
+\textbf{Computation Time.} The experiments are done separately on the AWS and Blue Waters. The total time spent on the Blue waters are approximately 450 hours while we spent around 230 hours on the AWS (Approximately 230 * 2.5=575 computation hours on Blue Waters).
 
 \textbf{Supplements.} All the supporting code can be found at the \href{https://github.com/Rothdyt/Projects/tree/master/Show-and-tell}{Github} repository.
 
 
 \section{Discussion}
-For this final project, our group implemented the Neural Image Caption(NIC) generator model, one end-to-end neural network that could automatically generate a reasonable description for the input image using plain English. This neural network model combines a convolution neural network(CNN) with a recurrent neural network(RNN). The CNN could encode the image into a compact representation and the RNN as a decoder could generate a  meaningful sequence. Experiments are based on the \textit{MSCOCO 2014} dataset. Reasonable captions generated from our trained model shows that the NIC model is robust in qualitative results. Also different choices of hyper-parameters are tested, where the best test BLEU-4 score is 0.35371 comparing to the theoretical BLEU-4 0.301. For the future, we believe better encoding and decoding neural network could be further developed along with  refined image representation, RNN architecture and improved optimization algorithms. Therefore, the performance of such kind of Neural Image Caption models is expected to be better than human's.
+For this final project, our group implemented the Neural Image Caption(NIC) generator model, one end-to-end neural network that could automatically generate a reasonable description for the input image using plain English. This neural network model combines a convolution neural network(CNN) with a recurrent neural network(RNN). The CNN could encode the image into a compact representation and the RNN as a decoder could generate a  meaningful sequence. Experiments are based on the \textit{MSCOCO 2014} dataset. Reasonable captions generated from our trained model shows that the NIC model is robust in qualitative results. Also different choices of hyper-parameters are tested, where the best test BLEU-4 score is 0.35371 comparing to the theoretical BLEU-4 0.301. For the future, we believe better encoding and decoding neural network could be further developed along with  refined image representation, RNN architecture and improved optimization algorithms. Therefore, such kind of Neural Image Caption model is expected to perform better than human.
 
 %------------------------------------------------
 % \phantomsection
