@@ -1,5 +1,6 @@
 # ---------------- plot 1 contour plot ----------------
 rm(list = ls())
+library(ggplot2)
 load("results_to_report/sim_n100p1000rho095.RData")
 x<-as.matrix(x)
 y<-as.matrix(y)
@@ -29,32 +30,61 @@ source("R/ubforlogit_tracker_version.R")
 source("R/sju_tracker_version.R")
 r1<-sju(x,y,lambda,cr=-1)
 r2<-ubforlogit(x,y,lambda)
-contour(x = beta, y = itc,z = z, 
-        nlev = 20, lty = 2, method = "simple",
-        drawlabels = F,axes = TRUE,
-        xlab=expression(beta[1]),ylab=expression(beta[0]))
-points(x=r1$beta_tracker,y=r1$itc_tracker,col="blue",pch=1)
-lines(x=r1$beta_tracker,y=r1$itc_tracker,col="blue",lty=1)
-points(x=r2$beta_tracker,y=r2$itc_tracker,col="red",pch=2)
-lines(x=r2$beta_tracker,y=r2$itc_tracker,col="red",lty=2)
-leg.1 <- paste("Jacobi, iterations=",r1$iteration)
-leg.2 <- paste("Gauss-Sidel, iterations=",r2$iteration)
-legend("topleft",legend = c(leg.1,leg.2),col=c("blue","red"),border = "red",
-       bty = "o",
-       pch=c(1,2),lty=c(1,2))
+# contour(x = beta, y = itc,z = z,
+#         nlev = 20, lty = 2, method = "simple",
+#         drawlabels = F,axes = TRUE,
+#         xlab=expression(beta[1]),ylab=expression(beta[0]))
+# points(x=r1$beta_tracker,y=r1$itc_tracker,col="blue",pch=1)
+# lines(x=r1$beta_tracker,y=r1$itc_tracker,col="blue",lty=1)
+# points(x=r2$beta_tracker,y=r2$itc_tracker,col="red",pch=2)
+# lines(x=r2$beta_tracker,y=r2$itc_tracker,col="red",lty=2)
+# leg.1 <- paste("Jacobi, iterations=",r1$iteration)
+# leg.2 <- paste("Gauss-Sidel, iterations=",r2$iteration)
+# legend("topleft",legend = c(leg.1,leg.2),col=c("blue","red"),border = "red",
+#        bty = "o",
+#        pch=c(1,2),lty=c(1,2))
+x_axis <- vector(); y_axis <- vector(); z_axis <- vector()
+for (i in seq_len(100)){
+  for (j in seq_len(100)){
+    x_axis <- c(x_axis, beta[i])
+    y_axis <- c(y_axis, itc[j])
+    z_axis <- c(z_axis, z[i,j])
+  }
+}
+plot_data <- data.frame(x=x_axis, y=y_axis, z=z_axis)
+points <- data.frame(beta_tracker = c(r1$beta_tracker, r2$beta_tracker), 
+                     itc_tracker = c(r1$itc_tracker, r2$itc_tracker),
+                     label = c(rep("Jacobi, iterations=22", length(r1$itc_tracker)), rep("Gauss-Sidel, iterations=10", length(r2$itc_tracker))))
+ggplot(plot_data, aes(x=x, y=y, z=z)) + stat_contour() +
+  xlab(expression(beta[1])) + ylab(expression(beta[0])) + 
+  geom_point(data=points, mapping=aes_string(x = "beta_tracker", y = "itc_tracker", colour="label"), 
+             inherit.aes = FALSE)  + 
+  geom_line(data=points, mapping=aes_string(x = "beta_tracker", y = "itc_tracker", lty="label", colour="label"), 
+            inherit.aes = FALSE) + 
+  theme(legend.position="top", legend.title = element_blank())
+  
 
-r1<-sju(x,y,lambda,cr=-1)
-r3<-sju(x,y,lambda,cr=-0.5)
-contour(x = beta, y = itc,z = z, nlev = 20, lty = 2, 
-        method = "simple",drawlabels = F,axes = TRUE,
-        xlab=expression(beta~1),ylab=expression(beta~0))
-points(x=r1$beta_tracker,y=r1$itc_tracker,col="blue",pch=1,cex=1)
-points(x=r3$beta_tracker,y=r3$itc_tracker,col="red",pch=2,cex=0.5)
+# r1<-sju(x,y,lambda,cr=-1)
+# r3<-sju(x,y,lambda,cr=-0.5)
+# contour(x = beta, y = itc,z = z, nlev = 20, lty = 2, 
+#         method = "simple",drawlabels = F,axes = TRUE,
+#         xlab=expression(beta~1),ylab=expression(beta~0))
+# points(x=r1$beta_tracker,y=r1$itc_tracker,col="blue",pch=1,cex=1)
+# points(x=r3$beta_tracker,y=r3$itc_tracker,col="red",pch=2,cex=0.5)
+# 
+# leg.1 <- paste("Smaller c,iterations=",r1$iteration)
+# leg.3 <- paste("Larger c,iterations=",r3$iteration)
+# legend("topleft",legend = c(leg.1,leg.3),col=c("blue","red"),pch=c(1,2))
 
-leg.1 <- paste("Smaller c,iterations=",r1$iteration)
-leg.3 <- paste("Larger c,iterations=",r3$iteration)
-legend("topleft",legend = c(leg.1,leg.3),col=c("blue","red"),pch=c(1,2))
-
+points <- data.frame(beta_tracker = c(r1$beta_tracker, r3$beta_tracker), 
+                     itc_tracker = c(r1$itc_tracker, r3$itc_tracker),
+                     label = c(rep("Smaller c,iterations=22", length(r1$itc_tracker)), rep("Larger c,iterations=45", length(r3$itc_tracker))),
+                     shape=c(rep("1", 46), rep("2", 23)))
+ggplot(plot_data, aes(x=x, y=y, z=z)) + stat_contour() +
+  xlab(expression(beta[1])) + ylab(expression(beta[0])) + 
+  geom_point(data=points, mapping=aes_string(x = "beta_tracker", y = "itc_tracker", colour="label", shape="label", size="label"), 
+             inherit.aes = FALSE)  + 
+  theme(legend.position="top", legend.title = element_blank()) + scale_size_manual(values=c(1,1.5))
 # -------------- plot2 leukemia 1e-2 --------------
 
 rm(list=ls())

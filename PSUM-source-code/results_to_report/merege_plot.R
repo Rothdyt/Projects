@@ -1,5 +1,6 @@
 rm(list=ls())
-load("plot/leukemia_plot.Rdata")
+#load("plot/leukemia_plot.Rdata")
+load("results_to_report//leukemia_plot.Rdata")
 library(ggplot2)
 library(grid)
 vplayout<-function(x,y){
@@ -17,7 +18,7 @@ print(p4,vp=vplayout(2,2))
 grid.newpage()
 pushViewport(viewport(layout=grid.layout(2,1)))
 print(p1,vp=vplayout(1,1))
-print(p3,vp=vplayout(2,1))
+print(p2,vp=vplayout(2,1))
 
 rm(list=ls())
 load("sim_plot.Rdata")
