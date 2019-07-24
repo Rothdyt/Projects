@@ -1,0 +1,24 @@
+2019-07-24 16:32:29,492 - [INFO] - cgd-- N:768 | d:8 | lambda:0.0001
+2019-07-24 16:32:29,493 - [INFO] - Function value sequence convergence criteria.
+2019-07-24 16:32:29,493 - [INFO] - Epoch:    0 | FVAL: 0.3465736
+2019-07-24 16:32:29,496 - [INFO] - Epoch:    1 | FVAL: 0.2422662
+2019-07-24 16:32:29,500 - [INFO] - Epoch:    2 | FVAL: 0.2360142
+2019-07-24 16:32:29,503 - [INFO] - Epoch:    3 | FVAL: 0.2358199
+2019-07-24 16:32:29,507 - [INFO] - Epoch:    4 | FVAL: 0.2358104
+2019-07-24 16:32:29,511 - [INFO] - Epoch:    5 | FVAL: 0.2358095
+2019-07-24 16:32:29,610 - [INFO] - cgd-- N:768 | d:8 | lambda:1e-05
+2019-07-24 16:32:29,610 - [INFO] - Function value sequence convergence criteria.
+2019-07-24 16:32:29,611 - [INFO] - Epoch:    0 | FVAL: 0.3465736
+2019-07-24 16:32:29,614 - [INFO] - Epoch:    1 | FVAL: 0.2420188
+2019-07-24 16:32:29,618 - [INFO] - Epoch:    2 | FVAL: 0.2357360
+2019-07-24 16:32:29,621 - [INFO] - Epoch:    3 | FVAL: 0.2355389
+2019-07-24 16:32:29,625 - [INFO] - Epoch:    4 | FVAL: 0.2355290
+2019-07-24 16:32:29,629 - [INFO] - Epoch:    5 | FVAL: 0.2355281
+2019-07-24 16:32:29,720 - [INFO] - cgd-- N:768 | d:8 | lambda:1e-06
+2019-07-24 16:32:29,720 - [INFO] - Function value sequence convergence criteria.
+2019-07-24 16:32:29,720 - [INFO] - Epoch:    0 | FVAL: 0.3465736
+2019-07-24 16:32:29,724 - [INFO] - Epoch:    1 | FVAL: 0.2419940
+2019-07-24 16:32:29,727 - [INFO] - Epoch:    2 | FVAL: 0.2357081
+2019-07-24 16:32:29,731 - [INFO] - Epoch:    3 | FVAL: 0.2355107
+2019-07-24 16:32:29,735 - [INFO] - Epoch:    4 | FVAL: 0.2355008
+2019-07-24 16:32:29,739 - [INFO] - Epoch:    5 | FVAL: 0.2354999
